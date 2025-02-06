@@ -1,8 +1,7 @@
 import mongoose from "mongoose"
 
 const CategorySchema = mongoose.Schema({
-    categoryId:{type:mongoose.Types.ObjectId,auto:true
-    ,require:true,unique:true},
+    categoryId:{type:mongoose.Types.ObjectId,auto:true,unique:true},
     categoryPersianName:{type:String,max:[100,'max len 100 chars'],require:[true,'category is required']},
     categoryLatinName:{type:String,max:[100,'max len 100 chars']},
     description:{type:String,max:[500,'max len 500 chars']},

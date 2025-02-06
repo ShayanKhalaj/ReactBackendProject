@@ -36,7 +36,7 @@ app.options('*', cors());
 
 // محدود کردن درخواست‌ها برای جلوگیری از حملات DDoS
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 دقیقه
+    windowMs: 1 * 60 * 1000, // 15 دقیقه
     max: 100, // حداکثر 100 درخواست در 15 دقیقه
     message: "Too many requests from this IP, please try again later",
 });

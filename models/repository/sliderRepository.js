@@ -72,31 +72,80 @@ class SliderRepository {
         }
     }
 
-    async search(query = {}, page = 1, limit = 10) {
-        const result = new Result('search sliders');
+    search = async (query = {}, page = 1, limit = 20) => {
+        const r = new Result('search sliders');
         try {
-            const skip = (page - 1) * limit;
-            const [slidersList, total] = await Promise.all([
-                sliders.find(query).skip(skip).limit(limit).populate('movies.movieId').populate('series.serieId'),
-                sliders.countDocuments(query),
+            let cats = sliders.find({});
+
+            // اضافه کردن فیلترها به کوئری
+            if (query.sliderId && query.sliderId.trim().length > 0) {
+                cats = cats.where("sliderId").equals(query.sliderId.trim());
+            }
+            if (query.sliderPersianTitle && query.sliderPersianTitle.trim().length > 0) {
+                cats = cats.where("sliderPersianTitle").equals({ $regex: query.sliderPersianTitle.trim(), $options: 'i' });
+            }
+            if (query.sliderLatinTitle && query.sliderLatinTitle.trim().length > 0) {
+                cats = cats.where("sliderLatinTitle").equals({ $regex: query.sliderLatinTitle.trim(), $options: 'i' });
+            }
+            if (query.summary && query.summary.trim().length > 0) {
+                cats = cats.where("summary").equals({ $regex: query.summary.trim(), $options: 'i' });
+            }
+            if (query.description && query.description.trim().length > 0) {
+                cats = cats.where("description").equals({ $regex: query.description.trim(), $options: 'i' });
+            }
+            if (query.pageUrl && query.pageUrl.trim().length > 0) {
+                cats = cats.where("pageUrl").equals({ $regex: query.pageUrl.trim(), $options: 'i' });
+            }
+    
+            // انتخاب فیلدهای مورد نیاز
+            const q = cats.select([
+                'sliderId',
+                'sliderPersianTitle',
+                'sliderLatinTitle',
+                'saummary',
+                'description',
+                'pageUrl',
+                'movies',
+                'series',
             ]);
-
-            const totalPages = Math.ceil(total / limit);
-
-            return result.succeeded('Sliders fetched successfully', {
-                data: slidersList,
+    
+            // دریافت تعداد کل مستندات مطابق با فیلترها
+            const count = await categories.countDocuments(cats.getQuery());
+    
+            // دریافت نتایج صفحه‌بندی شده
+            const results = await q
+                .sort([["sliderPersianTitle", "desc"]])
+                .skip((page - 1) * limit)  // اصلاح صفحه‌بندی
+                .limit(limit);
+    
+            // ساخت لیست داده‌ها
+            const catsList = results.map(item => ({
+                sliderId:item.sliderId,
+                sliderPersianTitle:item.sliderPersianTitle,
+                sliderLatinTitle:item.sliderLatinTitle,
+                saummary:item.saummary,
+                description:item.description,
+                pageUrl:item.pageUrl,
+                movies:item.movies,
+                series:item.series,
+            }));
+            // محاسبه تعداد کل صفحات
+            const totalPages = Math.ceil(count / limit);
+    
+            return r.succeeded('Sliders fetched successfully', {
+                data: catsList,
                 pagination: {
-                    total,
-                    totalPages,
+                    total: count,
+                    totalPages: totalPages,
                     currentPage: page,
                     pageSize: limit,
                 },
             }, 200);
         } catch (error) {
             console.error("Error in search:", error);
-            return result.failed('Failed to fetch sliders', undefined, 500);
+            return r.failed('Failed to fetch sliders', undefined, 500);
         }
-    }
+    };
 }
 
 export default SliderRepository;

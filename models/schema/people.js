@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const PeopleSchema = mongoose.Schema({
-    directorId:{type:mongoose.Types.ObjectId,auto:true,require:true,unique:true},
+    personId:{type:mongoose.Types.ObjectId,auto:true,require:true,unique:true},
     firstname:{type:String,max:[50,'max len 50 chars'],require:[true,'firstname is required']},
     lastname:{type:String,max:[50,'max len 50 chars'],require:[true,'lastname is required']},
     profileImageUrl:{type:String,max:[2000,'max len 2000 chars']},

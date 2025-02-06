@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 router.use("/auth", authRouter);
 
 // ایمن سازی تمام روترهای پنل با احراز هویت و نقش مدیر
-router.use('/pannel/*', authenticate, isAdmin);
+//router.use('/pannel/*', authenticate, isAdmin);
 
 // روت های پنل که فقط مدیران می‌توانند به آن‌ها دسترسی پیدا کنند
 router.use('/pannel/categories', categoryRouter);

@@ -6,15 +6,6 @@ class CategoryController {
     async create(req, res) {
         const { body } = req;
 
-        // بررسی تکراری بودن
-        const isDuplicate = await categoryRepo.hasCategoryDuplicatedCategoryByThisPersianNameAndLatinName(
-            body.categoryPersianName,
-            body.categoryLatinName
-        );
-        if (isDuplicate) {
-            return res.status(400).json({ message: "Duplicate category detected" });
-        }
-
         // ایجاد دسته‌بندی
         const result = await categoryRepo.create(body);
         return res.status(result.statusCode).json(result);
@@ -35,6 +26,7 @@ class CategoryController {
     }
 
     async delete(req, res) {
+        console.log(req.params)
         const { id } = req.params;
 
         // بررسی ارتباط داشتن
@@ -63,8 +55,8 @@ class CategoryController {
     }
 
     async search(req, res) {
-        const { page = 1, limit = 10, ...query } = req.query; // خواندن فیلتر و پارامترهای صفحه‌بندی
-        const result = await categoryRepo.search(query, parseInt(page, 10), parseInt(limit, 10));
+        const { page = req.query.page, limit = req.query.limit, ...query } = req.query; // خواندن فیلتر و پارامترهای صفحه‌بندی
+        const result = await categoryRepo.search(query, page,limit);
         return res.status(result.statusCode).json(result);
     }
 

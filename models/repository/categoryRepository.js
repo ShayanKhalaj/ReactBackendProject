@@ -100,36 +100,81 @@ class CategoryRepository {
         }
     }
 
-    async search(query = {}, page = 1, limit = 10) {
-        const result = new Result('search categories');
+    search = async (query = {}, page = 1, limit = 20) => {
+        const r = new Result('search categories');
         try {
-            // محاسبه‌ی تعداد آیتم‌هایی که باید رد شود
-            const skip = (page - 1) * limit;
-
-            // جستجو و دریافت دسته‌بندی‌ها
-            const [categoriesList, total] = await Promise.all([
-                categories.find(query).skip(skip).limit(limit),
-                categories.countDocuments(query),
+            let cats = categories.find({});
+            
+            // اضافه کردن فیلترها به کوئری
+            if (query.categoryId && query.categoryId.trim().length > 0) {
+                cats = cats.where("categoryId").equals(query.categoryId.trim());
+            }
+            if (query.categoryPersianName && query.categoryPersianName.trim().length > 0) {
+                cats = cats.where("categoryPersianName").equals({ $regex: query.categoryPersianName.trim(), $options: 'i' });
+            }
+            if (query.categoryLatinName && query.categoryLatinName.trim().length > 0) {
+                cats = cats.where("categoryLatinName").equals({ $regex: query.categoryLatinName.trim(), $options: 'i' });
+            }
+            if (query.summary && query.summary.trim().length > 0) {
+                cats = cats.where("summary").equals({ $regex: query.summary.trim(), $options: 'i' });
+            }
+            if (query.description && query.description.trim().length > 0) {
+                cats = cats.where("description").equals({ $regex: query.description.trim(), $options: 'i' });
+            }
+            if (query.categoryImageUrl && query.categoryImageUrl.trim().length > 0) {
+                cats = cats.where("categoryImageUrl").equals({ $regex: query.categoryImageUrl.trim(), $options: 'i' });
+            }
+    
+            // انتخاب فیلدهای مورد نیاز
+            const q = cats.select([
+                "categoryId", 
+                "categoryPersianName", 
+                "categoryLatinName", 
+                "summary", 
+                "description", 
+                "categoryImageUrl"
             ]);
-
-            // محاسبه‌ی تعداد کل صفحات
-            const totalPages = Math.ceil(total / limit);
-
-            // ساختار پاسخ
-            return result.succeeded('Categories fetched successfully', {
-                data: categoriesList,
+    
+            // دریافت تعداد کل مستندات مطابق با فیلترها
+            const count = await categories.countDocuments(cats.getQuery());
+    
+            // دریافت نتایج صفحه‌بندی شده
+            const results = await q
+                .sort([["categoryPersianName", "desc"]])
+                .skip((page - 1) * limit)  // اصلاح صفحه‌بندی
+                .limit(limit);
+    
+            // ساخت لیست داده‌ها
+            const catsList = results.map(item => ({
+                categoryId: item.categoryId,
+                categoryPersianName: item.categoryPersianName,
+                categoryLatinName: item.categoryLatinName,
+                description: item.description,
+                summary: item.summary,
+                categoryImageUrl: item.categoryImageUrl,
+            }));
+            // محاسبه تعداد کل صفحات
+            const totalPages = Math.ceil(count / limit);
+    
+            return r.succeeded('Categories fetched successfully', {
+                data: catsList,
                 pagination: {
-                    total,
-                    totalPages,
+                    total: count,
+                    totalPages: totalPages,
                     currentPage: page,
                     pageSize: limit,
                 },
             }, 200);
         } catch (error) {
             console.error("Error in search:", error);
-            return result.failed('Failed to fetch categories', undefined, 500);
+            return r.failed('Failed to fetch categories', undefined, 500);
         }
-    }
+    };
+    
+    
+    
+    
+    
 }
 
 export default CategoryRepository;

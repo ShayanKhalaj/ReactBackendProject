@@ -1,34 +1,23 @@
-class Result{
-    name=''
-    date=new Date()
-    documentId=''
-    success=false
-    status=100
-    message=''
-    constructor(name=''){
-        if(typeof name !== typeof 'string'){
-            throw new Error('name must be string')
-        }
-        if(name.length===0){
-            throw new Error('enter the operation name')
-        }
-        this.name=name
-        this.date=new Date()
+class Result {
+    constructor(action) {
+        this.action = action;
+        this.message = "";
+        this.data = null;
+        this.statusCode = null;
     }
-    succeeded(message=undefined,documentId=undefined,status=undefined){
-        this.success=true
-        if(typeof message === typeof 'string') this.message=message
-        if(typeof documentId === typeof 'string' && documentId.length>0) this.documentId=documentId
-        if(typeof status===typeof 0) this.status=status
-        return this
+
+    succeeded(message, data, statusCode = 200) {
+        this.message = message;
+        this.data = data;
+        this.statusCode = statusCode;
+        return this;
     }
-    failed(message=undefined,documentId=undefined,status=undefined){
-        this.success=false
-        if(typeof message === typeof 'string') this.message=message
-        if(typeof documentId === typeof 'string' && documentId.length>0) this.documentId=documentId
-        if(typeof status===typeof 0) this.status=status
-        return this
+
+    failed(message, data, statusCode = 500) {
+        this.message = message;
+        this.data = data;
+        this.statusCode = statusCode;
+        return this;
     }
 }
-
 export default Result
