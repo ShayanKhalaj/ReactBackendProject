@@ -158,7 +158,7 @@ class MovieRepository {
       ]);
 
       // دریافت تعداد کل مستندات مطابق با فیلترها
-      const count = await categories.countDocuments(cats.getQuery());
+      const count = await movies.countDocuments(cats.getQuery());
 
       // دریافت نتایج صفحه‌بندی شده
       const results = await q

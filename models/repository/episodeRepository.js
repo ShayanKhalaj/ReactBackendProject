@@ -118,11 +118,6 @@ class EpisodeRepository {
           .where("description")
           .equals({ $regex: query.description.trim(), $options: "i" });
       }
-      if (query.categoryImageUrl && query.categoryImageUrl.trim().length > 0) {
-        cats = cats
-          .where("categoryImageUrl")
-          .equals({ $regex: query.categoryImageUrl.trim(), $options: "i" });
-      }
 
       // انتخاب فیلدهای مورد نیاز
       const q = cats.select([
@@ -139,7 +134,7 @@ class EpisodeRepository {
       ]);
 
       // دریافت تعداد کل مستندات مطابق با فیلترها
-      const count = await categories.countDocuments(cats.getQuery());
+      const count = await episodes.countDocuments(cats.getQuery());
 
       // دریافت نتایج صفحه‌بندی شده
       const results = await q

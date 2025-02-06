@@ -147,7 +147,7 @@ class SerieRepository {
       ]);
 
       // دریافت تعداد کل مستندات مطابق با فیلترها
-      const count = await categories.countDocuments(cats.getQuery());
+      const count = await series.countDocuments(cats.getQuery());
 
       // دریافت نتایج صفحه‌بندی شده
       const results = await q

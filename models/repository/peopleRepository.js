@@ -124,7 +124,7 @@ class PeopleRepository {
       ]);
 
       // دریافت تعداد کل مستندات مطابق با فیلترها
-      const count = await categories.countDocuments(cats.getQuery());
+      const count = await people.countDocuments(cats.getQuery());
 
       // دریافت نتایج صفحه‌بندی شده
       const results = await q

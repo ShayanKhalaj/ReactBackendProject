@@ -116,7 +116,7 @@ class GenreRepository {
       ]);
 
       // دریافت تعداد کل مستندات مطابق با فیلترها
-      const count = await categories.countDocuments(cats.getQuery());
+      const count = await genres.countDocuments(cats.getQuery());
 
       // دریافت نتایج صفحه‌بندی شده
       const results = await q
