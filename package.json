@@ -1,0 +1,29 @@
+{
+  "name": "vod-backend",
+  "version": "1.0.0",
+  "description": "This is the backend of vod project",
+  "main": "app.js",
+  "scripts": {
+    "start:dev": "nodemon -w . -e js,json --exec node app.js",
+    "start": "node app.js"
+  },
+  "type": "module",
+  "author": "Shayan Khalaj",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.3",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "sass": "^1.85.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
