@@ -17,7 +17,7 @@ class AuthController {
       }
 
       // هش کردن رمز عبور
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // const hashedPassword = await bcrypt.hash(password, 10);
 
       // ایجاد و ذخیره کاربر
       const user = new User({
@@ -26,7 +26,7 @@ class AuthController {
         lastName,
         mobile,
         email,
-        password: hashedPassword, // ذخیره رمز عبور هش‌شده
+        password, // ذخیره رمز عبور هش‌شده
       });
       await user.save();
 
@@ -50,6 +50,7 @@ class AuthController {
 
       // مقایسه رمز عبور
       const isMatch = await bcrypt.compare(password, user.password);
+      console.log(isMatch)
       if (!isMatch) {
         return res.status(401).json({ message: "رمز عبور اشتباه است" });
       }
@@ -66,6 +67,7 @@ class AuthController {
         message: "ورود موفقیت‌آمیز بود",
         token,
         role: user.role,
+        user:user
       });
     } catch (error) {
       console.error("Login Error:", error);
